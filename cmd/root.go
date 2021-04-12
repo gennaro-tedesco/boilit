@@ -2,20 +2,23 @@ package cmd
 
 import (
 	"fmt"
-	"os"
+	"os/user"
 
 	"github.com/spf13/cobra"
 )
 
-var cfgFile string
+var usr, _ = user.Current()
+var homedir = usr.HomeDir
 
 var rootCmd = &cobra.Command{
 	Use:   "boilit",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Args:  cobra.ExactArgs(1),
+	Short: "create boilerplate code for neovim plugins",
+	Long:  `create boilerplate code for neovim plugins`,
+	Run: func(cmd *cobra.Command, args []string) {
+		rootPath, _ := cmd.Flags().GetString("path")
+		createPluginDir(args[0], rootPath)
+	},
 }
 
 func Execute() {
@@ -23,5 +26,5 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.Flags().StringP("path", "p", homedir, "root path to plugin directory")
 }
