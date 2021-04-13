@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -39,8 +40,56 @@ func createGitignore(pluginPath string) {
 
 }
 
+func createDocs(pluginPath string, pluginName string) {
+	docsPath := filepath.Join(pluginPath, "doc")
+	err := os.MkdirAll(docsPath, os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tagsPath := filepath.Join(docsPath, "tags")
+	tagsFile, tagsErr := os.Create(tagsPath)
+	if tagsErr != nil {
+		log.Fatal(tagsErr)
+	}
+	defer tagsFile.Close()
+
+	helpPath := filepath.Join(docsPath, pluginName+".txt")
+	helpFile, helpErr := os.Create(helpPath)
+	if helpErr != nil {
+		log.Fatal(helpErr)
+	}
+	defer helpFile.Close()
+}
+
+func createVimDir(pluginPath string, pluginName string) {
+	vimPluginPath := filepath.Join(pluginPath, "plugin")
+	fmt.Println(vimPluginPath)
+	err := os.MkdirAll(vimPluginPath, os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	pluginVim := filepath.Join(vimPluginPath, pluginName+".vim")
+	pluginVimFile, pluginVimErr := os.Create(pluginVim)
+	if pluginVimErr != nil {
+		log.Fatal(pluginVimErr)
+	}
+	defer pluginVimFile.Close()
+
+	reloadVim := filepath.Join(vimPluginPath, "reload.vim")
+	reloadVimFile, reloadVimErr := os.Create(reloadVim)
+	if reloadVimErr != nil {
+		log.Fatal(reloadVimErr)
+	}
+	defer reloadVimFile.Close()
+
+}
+
 func boilPlugin(rootPath string, pluginName string) {
 	pluginPath := createPluginDir(rootPath, pluginName)
 	createReadme(pluginPath, pluginName)
 	createGitignore(pluginPath)
+	createDocs(pluginPath, pluginName)
+	createVimDir(pluginPath, pluginName)
 }
