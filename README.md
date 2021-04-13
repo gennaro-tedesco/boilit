@@ -1,4 +1,7 @@
 <h1 align="center">
+  <br>
+  <img width="300" height="300" src="logo.png">
+  <br>
   boilit
 </h1>
 
@@ -51,7 +54,7 @@ creates a plugin boilerplate structure as
 ```
 Watch it in action:
 
-[![asciicast](https://asciinema.org/a/nkdbgsbDNXoxt43SPwSFl4SoM.svg)](https://asciinema.org/a/nkdbgsbDNXoxt43SPwSFl4SoM)
+[![asciicast](https://asciinema.org/a/VpggIG2YeksuuryIHFmVATX43.svg)](https://asciinema.org/a/VpggIG2YeksuuryIHFmVATX43)
 
 The plugin skeleton is created by default in the user's home directory `~`: you can specify a custom location via the `-p` flag
 ```

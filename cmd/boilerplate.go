@@ -75,14 +75,18 @@ func createVimDir(pluginPath string, pluginName string) {
 		log.Fatal(pluginVimErr)
 	}
 	defer pluginVimFile.Close()
-	pluginVimFile.WriteString(`if exists('g:loaded_` + pluginName + `')
-  finish
-endif
+	pluginVimFile.WriteString(`if exists('g:loaded_` + pluginName + `') | finish | endif
 
 " expose vim commands and interface here
 " nnoremap <Plug>PlugCommand :lua require(...).plug_command()<CR>
 
+let s:save_cpo = &cpo
+set cpo&vim
+
 let g:loaded_` + pluginName + ` = 1
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
 `)
 
 	reloadVim := filepath.Join(vimPluginPath, "reload.vim")
