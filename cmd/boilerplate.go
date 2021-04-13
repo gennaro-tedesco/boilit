@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -142,4 +143,5 @@ func boilPlugin(rootPath string, pluginName string) {
 	createDocs(pluginPath, pluginName)
 	createVimDir(pluginPath, pluginName)
 	createLuaDir(pluginPath, pluginName)
+	fmt.Printf("boiled %s at %s\n", pluginName, pluginPath)
 }

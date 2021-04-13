@@ -17,8 +17,7 @@
 <h4 align="center">Boil yourself a sweet plugin</h4>
 <h3 align="center">
   <a href="#Installation">Installation</a> •
-  <a href="#Usage">Usage</a> •
-  <a href="#Examples">Examples</a>
+  <a href="#Usage">Usage</a>
 </h3>
 
 Ain't nobody got time to create plugin directories: `boilit` yourself! `boilit` creates boilerplate directory structure and code files for neovim plugins; although there is no unique way to do so, we create a reasonable tree structure useful for most use cases, so that you can build on it.
@@ -31,7 +30,7 @@ go get -u -v github.com/gennaro-tedesco/boilit
 ```
 
 ## Usage
-All you have to do is think of an awesome name for your plugin: once you have it
+All you have to do is thinking of an awesome name for your plugin: once you have it
 ```
 boilit nvim-awesome-plugin
 ```
@@ -50,13 +49,23 @@ creates a plugin boilerplate structure as
 │  └── reload.vim
 └── README.md
 ```
+Watch it in action:
 
 [![asciicast](https://asciinema.org/a/nkdbgsbDNXoxt43SPwSFl4SoM.svg)](https://asciinema.org/a/nkdbgsbDNXoxt43SPwSFl4SoM)
+
+The plugin skeleton is created by default in the user's home directory `~`: you can specify a custom location via the `-p` flag
+```
+boilit nvim-awesome-plugin -p ~/custom/path
+```
+Check the help `boilit -h`.
 
 Batteries included:
 
 - headers and description of what goes in what file
 - relative imports of lua modules
 - a useful `reload.vim` function to reload your changes without having to exit and reload neovim
+
+## Feedback
+If you find this plugin useful consider awarding it a ⭐, it is a great way to give feedback! Otherwise, any additional suggestions or merge request is warmly welcome!
 
 
