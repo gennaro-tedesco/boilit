@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os/user"
 
 	"github.com/spf13/cobra"
@@ -17,7 +16,7 @@ var rootCmd = &cobra.Command{
 	Long:  `create boilerplate code for neovim plugins`,
 	Run: func(cmd *cobra.Command, args []string) {
 		rootPath, _ := cmd.Flags().GetString("path")
-		createPluginDir(args[0], rootPath)
+		boilPlugin(rootPath, args[0])
 	},
 }
 
@@ -26,5 +25,22 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().StringP("path", "p", homedir, "root path to plugin directory")
+	rootCmd.SetHelpTemplate(getRootHelp())
+	rootCmd.Flags().StringP("path", "p", homedir, "root path of plugin directory")
+}
+
+func getRootHelp() string {
+	return `
+boilit: create boilterplate code for neovim plugins
+
+Arguments:
+  plugin-name    name of the plugin to create
+
+Usage:
+  boilit plugin-name [flag]
+
+Flags:
+  -h, --help   help for boilit
+  -p, --path   root path of plugin directory: defaults to user's home directory: ~
+`
 }
