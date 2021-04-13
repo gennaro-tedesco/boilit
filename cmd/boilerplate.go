@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -64,7 +63,6 @@ func createDocs(pluginPath string, pluginName string) {
 
 func createVimDir(pluginPath string, pluginName string) {
 	vimPluginPath := filepath.Join(pluginPath, "plugin")
-	fmt.Println(vimPluginPath)
 	err := os.MkdirAll(vimPluginPath, os.ModePerm)
 	if err != nil {
 		log.Fatal(err)
@@ -76,6 +74,15 @@ func createVimDir(pluginPath string, pluginName string) {
 		log.Fatal(pluginVimErr)
 	}
 	defer pluginVimFile.Close()
+	pluginVimFile.WriteString(`if exists('g:loaded_` + pluginName + `')
+  finish
+endif
+
+" expose vim commands and interface here
+" nnoremap <Plug>PlugCommand :lua require(...).plug_command()<CR>
+
+let g:loaded_` + pluginName + ` = 1
+`)
 
 	reloadVim := filepath.Join(vimPluginPath, "reload.vim")
 	reloadVimFile, reloadVimErr := os.Create(reloadVim)
@@ -83,7 +90,49 @@ func createVimDir(pluginPath string, pluginName string) {
 		log.Fatal(reloadVimErr)
 	}
 	defer reloadVimFile.Close()
+	reloadVimFile.WriteString(`function! Reload() abort
+	lua for k in pairs(package.loaded) do if k:match("^` + pluginName + `") then package.loaded[k] = nil end end
+	lua require("` + pluginName + `")
+endfunction
 
+nnoremap rr :call Reload()<CR>
+`)
+}
+
+func createLuaDir(pluginPath string, pluginName string) {
+	luaPath := filepath.Join(pluginPath, "lua/"+pluginName)
+	err := os.MkdirAll(luaPath, os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	initLua := filepath.Join(luaPath, "init.lua")
+	initLuaFile, initErr := os.Create(initLua)
+	if initErr != nil {
+		log.Fatal(initErr)
+	}
+	defer initLuaFile.Close()
+	initLuaFile.WriteString(`--[[ this module exposes the interface of lua functions:
+define here the lua functions that activate the plugin ]]
+
+local main = require("` + pluginName + `.main")
+local config = require("` + pluginName + `.config")
+`)
+
+	configLua := filepath.Join(luaPath, "config.lua")
+	configLuaFile, configErr := os.Create(configLua)
+	if configErr != nil {
+		log.Fatal(configErr)
+	}
+	defer configLuaFile.Close()
+
+	mainLua := filepath.Join(luaPath, "main.lua")
+	mainLuaFile, mainErr := os.Create(mainLua)
+	if mainErr != nil {
+		log.Fatal(mainErr)
+	}
+	defer mainLuaFile.Close()
+	mainLuaFile.WriteString(`local config = require("` + pluginName + `.config")`)
 }
 
 func boilPlugin(rootPath string, pluginName string) {
@@ -92,4 +141,5 @@ func boilPlugin(rootPath string, pluginName string) {
 	createGitignore(pluginPath)
 	createDocs(pluginPath, pluginName)
 	createVimDir(pluginPath, pluginName)
+	createLuaDir(pluginPath, pluginName)
 }
