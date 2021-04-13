@@ -1,7 +1,4 @@
 <h1 align="center">
-  <br>
-  <img width="300" height="300" src="logo.png">
-  <br>
   boilit
 </h1>
 
