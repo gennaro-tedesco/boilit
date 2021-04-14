@@ -53,7 +53,7 @@ Watch it in action:
 
 [![asciicast](https://asciinema.org/a/VpggIG2YeksuuryIHFmVATX43.svg)](https://asciinema.org/a/VpggIG2YeksuuryIHFmVATX43)
 
-The plugin skeleton is created by default in the user's home directory `~`: you can specify a custom location via the `-p` flag
+The plugin skeleton is created by default in the user's current directory: you can specify a custom location via the `-p` flag
 ```
 boilit nvim-awesome-plugin -p ~/custom/path
 ```
