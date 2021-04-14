@@ -1,13 +1,12 @@
 package cmd
 
 import (
-	"os/user"
+	"os"
 
 	"github.com/spf13/cobra"
 )
 
-var usr, _ = user.Current()
-var homedir = usr.HomeDir
+var cwd, _ = os.Getwd()
 
 var rootCmd = &cobra.Command{
 	Use:   "boilit",
@@ -26,7 +25,7 @@ func Execute() {
 
 func init() {
 	rootCmd.SetHelpTemplate(getRootHelp())
-	rootCmd.Flags().StringP("path", "p", homedir, "root path of plugin directory")
+	rootCmd.Flags().StringP("path", "p", cwd, "root path of plugin directory")
 }
 
 func getRootHelp() string {
