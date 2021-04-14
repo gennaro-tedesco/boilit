@@ -36,12 +36,17 @@ boilit nvim-awesome-plugin
 ```
 creates a plugin boilerplate structure as
 ```
+.
+├── autoload
+│  └── health
+│     └── nvim-awesome-plugin.vim
 ├── doc
 │  ├── nvim-awesome-plugin.txt
 │  └── tags
 ├── lua
 │  └── nvim-awesome-plugin
 │     ├── config.lua
+│     ├── health.lua
 │     ├── init.lua
 │     └── main.lua
 ├── plugin
@@ -57,13 +62,16 @@ The plugin skeleton is created by default in the user's current directory: you c
 ```
 boilit nvim-awesome-plugin -p ~/custom/path
 ```
-Check the help `boilit -h`.
+Check the help `boilit -h` for further details.
 
 Batteries included:
 
 - headers and description of what goes in what file
 - relative imports of lua modules
 - a useful `reload.vim` function to reload your changes without having to exit and reload neovim
+- healthcheck template to appear in `:checkhealth`
+
+If your plugin name contains special characters or escape sequences, they _may_ generate exceptions in some of the template functions: make sure to escape the escapable in case.
 
 ## Feedback
 If you find this application useful consider awarding it a ⭐, it is a great way to give feedback! Otherwise, any additional suggestions or merge request is warmly welcome!
