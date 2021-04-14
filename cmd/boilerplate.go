@@ -104,6 +104,25 @@ nnoremap rr :call Reload()<CR>
 `)
 }
 
+func createAutoloadDir(pluginPath string, pluginName string) {
+	autoloadPath := filepath.Join(pluginPath, "autoload/health")
+	err := os.MkdirAll(autoloadPath, os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	healthVim := filepath.Join(autoloadPath, pluginName+".vim")
+	healthVimFile, healthErr := os.Create(healthVim)
+	if healthErr != nil {
+		log.Fatal(healthErr)
+	}
+	defer healthVimFile.Close()
+	healthVimFile.WriteString(`function! health#` + pluginName + `#check()
+  lua require 'nvimtest.health'.checkhealth()
+endfunction
+`)
+}
+
 func createLuaDir(pluginPath string, pluginName string) {
 	luaPath := filepath.Join(pluginPath, "lua/"+pluginName)
 	err := os.MkdirAll(luaPath, os.ModePerm)
@@ -130,6 +149,15 @@ local config = require("` + pluginName + `.config")
 		log.Fatal(configErr)
 	}
 	defer configLuaFile.Close()
+	configLuaFile.WriteString(`--[[ this module contains configuration options:
+define here configuration functions to be exposed ]]
+
+local opts = {}
+
+return {
+	opts = opts,
+}
+`)
 
 	mainLua := filepath.Join(luaPath, "main.lua")
 	mainLuaFile, mainErr := os.Create(mainLua)
@@ -138,6 +166,30 @@ local config = require("` + pluginName + `.config")
 	}
 	defer mainLuaFile.Close()
 	mainLuaFile.WriteString(`local config = require("` + pluginName + `.config")`)
+
+	healthLua := filepath.Join(luaPath, "health.lua")
+	healthLuaFile, healthErr := os.Create(healthLua)
+	if healthErr != nil {
+		log.Fatal(healthErr)
+	}
+	defer healthLuaFile.Close()
+	healthLuaFile.WriteString(`local function checkhealth()
+   if vim.fn.has('nvim-0.5') then
+	  vim.fn['health#report_ok']('nightly installed')
+   else
+	  vim.fn['health#report_warn']('install neovim nightly')
+   end
+
+   -- check more health conditions here
+--[[    if vim.fn.executable('lua') ~= 1 then
+	  vim.fn['health#report_error']('lua not installed')
+   end ]]
+end
+
+return {
+   checkhealth = checkhealth,
+}
+`)
 }
 
 func boilPlugin(rootPath string, pluginName string) {
@@ -146,6 +198,7 @@ func boilPlugin(rootPath string, pluginName string) {
 	createGitignore(pluginPath)
 	createDocs(pluginPath, pluginName)
 	createVimDir(pluginPath, pluginName)
+	createAutoloadDir(pluginPath, pluginName)
 	createLuaDir(pluginPath, pluginName)
 	fmt.Printf("boiled %s at %s\n", pluginName, pluginPath)
 }
