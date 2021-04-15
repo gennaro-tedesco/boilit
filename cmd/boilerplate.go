@@ -118,8 +118,18 @@ func createAutoloadDir(pluginPath string, pluginName string) {
 	}
 	defer healthVimFile.Close()
 	healthVimFile.WriteString(`function! health#` + pluginName + `#check()
-  lua require 'nvimtest.health'.checkhealth()
+	if !has('nvim-0.5')
+		call health#report_warn("please install nvim > 0.5")
+	else
+		call health#report_ok("nvim 0.5 installed")
+	endif
+
+" 	check more health conditions here
+" 	if !executable('gcc')
+" 		health#report_error("gcc not installed")
+" 	endif
 endfunction
+
 `)
 }
 
@@ -166,30 +176,6 @@ return {
 	}
 	defer mainLuaFile.Close()
 	mainLuaFile.WriteString(`local config = require("` + pluginName + `.config")`)
-
-	healthLua := filepath.Join(luaPath, "health.lua")
-	healthLuaFile, healthErr := os.Create(healthLua)
-	if healthErr != nil {
-		log.Fatal(healthErr)
-	}
-	defer healthLuaFile.Close()
-	healthLuaFile.WriteString(`local function checkhealth()
-   if vim.fn.has('nvim-0.5') then
-	  vim.fn['health#report_ok']('nightly installed')
-   else
-	  vim.fn['health#report_warn']('install neovim nightly')
-   end
-
-   -- check more health conditions here
---[[    if vim.fn.executable('lua') ~= 1 then
-	  vim.fn['health#report_error']('lua not installed')
-   end ]]
-end
-
-return {
-   checkhealth = checkhealth,
-}
-`)
 }
 
 func boilPlugin(rootPath string, pluginName string) {
