@@ -46,7 +46,6 @@ creates a plugin boilerplate structure as
 ├── lua
 │  └── nvim-awesome-plugin
 │     ├── config.lua
-│     ├── health.lua
 │     ├── init.lua
 │     └── main.lua
 ├── plugin
