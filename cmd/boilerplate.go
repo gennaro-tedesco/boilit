@@ -104,6 +104,35 @@ nnoremap rr :call Reload()<CR>
 `)
 }
 
+func createAutoloadDir(pluginPath string, pluginName string) {
+	autoloadPath := filepath.Join(pluginPath, "autoload/health")
+	err := os.MkdirAll(autoloadPath, os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	healthVim := filepath.Join(autoloadPath, pluginName+".vim")
+	healthVimFile, healthErr := os.Create(healthVim)
+	if healthErr != nil {
+		log.Fatal(healthErr)
+	}
+	defer healthVimFile.Close()
+	healthVimFile.WriteString(`function! health#` + pluginName + `#check()
+	if !has('nvim-0.5')
+		call health#report_warn("please install nvim > 0.5")
+	else
+		call health#report_ok("nvim 0.5 installed")
+	endif
+
+" 	check more health conditions here
+" 	if !executable('gcc')
+" 		health#report_error("gcc not installed")
+" 	endif
+endfunction
+
+`)
+}
+
 func createLuaDir(pluginPath string, pluginName string) {
 	luaPath := filepath.Join(pluginPath, "lua/"+pluginName)
 	err := os.MkdirAll(luaPath, os.ModePerm)
@@ -130,6 +159,15 @@ local config = require("` + pluginName + `.config")
 		log.Fatal(configErr)
 	}
 	defer configLuaFile.Close()
+	configLuaFile.WriteString(`--[[ this module contains configuration options:
+define here configuration functions to be exposed ]]
+
+local opts = {}
+
+return {
+	opts = opts,
+}
+`)
 
 	mainLua := filepath.Join(luaPath, "main.lua")
 	mainLuaFile, mainErr := os.Create(mainLua)
@@ -146,6 +184,7 @@ func boilPlugin(rootPath string, pluginName string) {
 	createGitignore(pluginPath)
 	createDocs(pluginPath, pluginName)
 	createVimDir(pluginPath, pluginName)
+	createAutoloadDir(pluginPath, pluginName)
 	createLuaDir(pluginPath, pluginName)
 	fmt.Printf("boiled %s at %s\n", pluginName, pluginPath)
 }
