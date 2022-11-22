@@ -26,7 +26,7 @@ Ain't nobody got time to create plugin directories: `boilit` yourself! `boilit` 
 ## Installation
 Go get it!
 ```
-go get -u -v github.com/gennaro-tedesco/boilit
+go install github.com/gennaro-tedesco/boilit@latest
 ```
 
 ## Usage
